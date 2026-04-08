@@ -46,7 +46,7 @@ function App() {
       completed: false,
       priority: priority
     }; 
-    
+
     setTodos([...todos, newTodo]);
   };
 
@@ -63,7 +63,7 @@ function App() {
   }
 
   return(
-    <div style={{maxWidth: "600px", margin: "0 auto", padding: "20px"}}>
+    <div style={{maxWidth: "610px", margin: "0 auto", padding: "20px"}}>
       <Header stats={stats}/>
       <TodoForm onAdd={addTodo}/>
       <FilterBar filter={filter} onFilterChange={setFilter} searchTerm={searchTerm} onSearchChange={setSearchTerm}/>
