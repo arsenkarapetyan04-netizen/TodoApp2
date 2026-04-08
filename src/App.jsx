@@ -45,7 +45,8 @@ function App() {
       text: text,
       completed: false,
       priority: priority
-    };
+    }; 
+    
     setTodos([...todos, newTodo]);
   };
 
