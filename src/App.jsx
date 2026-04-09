@@ -1,76 +1,29 @@
-import './App.css'
 import { useState, useEffect } from 'react';
-import Header from './components/Header/Header';
-import TodoForm from './components/TodoForm/TodoForm';
-import TodoList from './components/TodoList/TodoList';
-import FilterBar from './components/FilterBar/FilterBar';
-import Footer from './components/Footer/Footer';
+import useToggle from './Hooks/useToggle';
 
-function App() {
-  const [todos, setTodos] = useState(() => {
-    const savedTodos = localStorage.getItem('todos');
-    if (savedTodos) {
-      return JSON.parse(savedTodos);
-    }
+export default function App() {
 
-    return [
-      {id: 1, text: "Изучить основы React", completed: true, priority: "high"},
-      {id: 2, text: "Сделать todo приложение", completed: false, priority: "high"},
-      {id: 3, text: "Изучить хуки", completed: false, priority: "medium"}
-    ];
-  });
+  const [darkMOde, setDarkMode] = useState(false)
+  const modal = useToggle(false);
+  const darkMode = useToggle(true);
+  const menu = useToggle(false);
 
-  const [filter, setFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState('');
+  return (
+    <div style={{ background: darkMode.value ? "#1a1a1a" : "#fff", color: darkMode.value ? "#fff" : "#333", minHeight: "100vh", padding: "20px" }}>
+      <button onClick={darkMode.toggle}>{darkMode.value ? "☀️ Light" : "🌙 Dark"}</button>
+      <button onClick={menu.toggle}>{menu.value ? "Close Menu" : "Open Menu"}</button>
+      <button onClick={modal.setTrue}>Open Modal</button>
 
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
-
-  const stats = {
-    total: todos.length,
-    completed: todos.filter(t => t.completed).length,
-    active: todos.filter(t => !t.completed).length,
-  }
-
-  const filteredTodos = todos.filter(todo => {
-    const matchesFilter = filter === "all" ? true : filter === "active" ? !todo.completed : todo.completed;
-    const matchesSearch = todo.text.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const addTodo = (text, priority) => {
-    const newTodo = {
-      id: Date.now(),
-      text: text,
-      completed: false,
-      priority: priority
-    }; 
-
-    setTodos([...todos, newTodo]);
-  };
-
-  const toggleTodo = (id) => {
-    setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo));
-  }
-
-  const deleteTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
-  }
-
-  const editTodo = (id, newText) => {
-    setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo));
-  }
-
-  return(
-    <div style={{maxWidth: "610px", margin: "0 auto", padding: "20px"}}>
-      <Header stats={stats}/>
-      <TodoForm onAdd={addTodo}/>
-      <FilterBar filter={filter} onFilterChange={setFilter} searchTerm={searchTerm} onSearchChange={setSearchTerm}/>
-      <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} onEdit={editTodo}/>
-      <Footer/>
+      {menu.value && <nav style={{ padding: "10px", background: "#f0f0f0" }}><p>Menu items here</p></nav>}
+      {modal.value && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "white", padding: "30px", borderRadius: "12px", color: "#333" }}>
+            <h2>Modal</h2>
+            <button onClick={modal.setFalse}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
